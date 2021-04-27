@@ -20,7 +20,9 @@ async function main() {
     });
 
     console.log(JSON.stringify(insertResult.ops, undefined, 2));
-    console.log(insertResult.ops[0]._id.getTimestamp());
+    console.log(insertResult.ops[0]._id.getTimestamp()); //extract Timestamp from object id
+
+    return 'done';
 
 }
 

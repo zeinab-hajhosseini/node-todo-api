@@ -1,4 +1,4 @@
-const { MongoClient } = require("mongodb");
+const { MongoClient } = require('mongodb');
 
 const url = "mongodb://localhost:27017";
 const client = new MongoClient(url);
@@ -10,14 +10,15 @@ async function main() {
     const db = client.db(dbName);
     const collection = db.collection('ToDos');
 
-    var fetchResult = await collection.find({ completed: true }).toArray();
-
-    console.log(fetchResult);
-
+    // const deleteResult = await collection.deleteMany({ completed: true });
+    const deleteResult = await collection.deleteOne({ completed: true });
+    console.log(deleteResult);
     return 'done';
+
 }
+
 
 main()
     .then(console.log)
     .catch(console.error)
-    .finally(() => { client.close });
+    .finally(() => { client.close(); })
