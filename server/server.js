@@ -40,9 +40,28 @@ app.get('/todos/:id', (req, res) => {
             return res.status(404).send();
 
         res.send({ todo });
-    }).catch((err)=>{
+    }).catch((err) => {
         return res.status(404).send();
-    })
+    });
+});
+
+app.delete('/todos/:id', (req, res) => {
+    var id = req.params.id;
+
+    if (!ObjectId.isValid(id)) {
+        res.status(404).send();
+    }
+
+    Todo.findOneAndDelete({ _id: new ObjectId(id) }).then((todo) => {
+        if (!todo)
+            res.status(404).send();
+
+        res.send({ todo });
+
+    }).catch((err) => {
+        res.status(404).send();
+    });
+
 });
 
 app.listen(3000, () => {
