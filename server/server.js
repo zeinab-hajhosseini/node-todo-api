@@ -5,6 +5,7 @@ var bodyParser = require('body-parser');
 const _ = require('lodash');
 
 var { Todo } = require('./models/todo');
+var { User } = require('./models/user');
 const { ObjectId } = require('mongodb');
 
 var app = express();
@@ -91,6 +92,17 @@ app.patch('/todos/:id', (req, res) => {
     })
 
 });
+
+app.post('/users', (req, res) => {
+    var body = _.pick(req.body, ['email', 'password']);
+    var user = new User(body);
+
+    user.save().then((user) => {
+        res.send(user);
+    }).catch((err) => {
+        res.status(400).send(err);
+    })
+})
 
 app.listen(3000, () => {
     console.log("Connected On Port 3000");
