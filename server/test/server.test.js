@@ -4,13 +4,16 @@ const expect = require('expect');
 var { app } = require('./../server');
 var { Todo } = require('./../models/todo');
 const { ObjectId } = require('mongodb');
+const { text } = require('body-parser');
 
 const Todos = [{
     _id: new ObjectId(),
-    text: "First Text"
+    text: "First Text",
+    completed: false
 }, {
     _id: new ObjectId(),
-    text: "Second Text"
+    text: "Second Text",
+    completed: false
 }];
 
 
@@ -118,6 +121,7 @@ describe("DELETE /todos/:id", (done) => {
     });
     it("Should be return 404 for invalid ObjectID", (done) => {
         var fake_hex_id = new ObjectId().toHexString();
+        console.log(fake_hex_id);
         request(app)
             .delete(`/todos/${fake_hex_id}`)
             .expect(404)
@@ -133,5 +137,41 @@ describe("DELETE /todos/:id", (done) => {
 
 });
 
+describe("PATCH /todos/:id", () => {
+    it("Should be update date when completed", (done) => {
+        var hex_id = Todos[0]._id.toHexString();
+        var text = "Test Update text";
+        request(app)
+            .patch(`/todos/${hex_id}`)
+            .send({
+                completed: true,
+                text
+            })
+            .expect(200)
+            .expect((res) => {
+                expect(res.body.todo.text).toBe(text);
+                expect(res.body.todo.completed).toBe(true);
+                expect(typeof res.body.todo.completedAt).toBe('number');
+            })
+            .end(done);
+    });
+    it("Should be null date when completed false", (done) => {
+        var hex_id = Todos[1]._id;
+        var text = "Test Update text";
 
+        request(app)
+            .patch(`/todos/${hex_id}`)
+            .send({
+                text
+            })
+            .expect(200)
+            .expect((res) => {
+                expect(res.body.todo.text).toBe(text);
+                expect(res.body.todo.completedAt).toBeNull();
+            })
+            .end(done)
+
+    });
+
+});
 
